@@ -58,14 +58,25 @@ describe('Shopping List Service object', function () {
         .insert(testData);
     });
 
-    describe('testing getAllItems', function () {
+    describe('testing getAllItems()', function () {
       it('should return the table from getAllItems()', function () {
         return shoppingListService.getAllItems(db)
           .then(actual => {
-            console.log(actual);
             expect(actual).to.eql(testData);
           });
       });
     });
-  });
+  
+
+    describe('testing getById()', function() {
+      it('should return the correct shopping item', () => {
+        const testId = testData[1].id;
+      
+        return shoppingListService.getById(db, testId)
+          .then(actual => {
+            expect(actual[0]).to.eql(testData[1]);
+          });
+      });
+    });
+  }); //end of given shopping list context
 });
