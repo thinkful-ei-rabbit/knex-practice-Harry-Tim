@@ -20,7 +20,7 @@ describe('Shopping List Service object', function () {
       name: 'Not Dogs',
       price: '4.99',
       date_added: new Date('2020-09-01T23:33:00.501Z'),
-      checked: true,
+      checked: false,
       category: 'Snack'
     },
     {
@@ -78,5 +78,27 @@ describe('Shopping List Service object', function () {
           });
       });
     });
+
+    describe('testing delete()', function() {
+      it('deleteItem() removes an item from shopping_list table', () => {
+        const idToDelete = 3;
+        return shoppingListService.deleteItem(db, idToDelete)
+        .then(() => shoppingListService.getAllItems(db))
+          .then(allItems => {
+            const expected = testItems
+            .filter(item => item.id !== idToDelete)
+            .map(item => ({
+              ...item,
+              checked: false,
+            }));
+            expect(allItems).to.eql(expected);
+          });
+        });
+      }
+  
+    
+
+
+
   }); //end of given shopping list context
-});
+);

@@ -12,7 +12,21 @@ const shoppingListService = {
       .select('*')
       .from('shopping_list')
       .where('id', id);
+  },
+
+  deleteItem(db, id) {
+    return db
+    .where({ id })
+    .delete();
   }
 };
+
+
+
+
+
+
+
+
 
 module.exports = shoppingListService;
