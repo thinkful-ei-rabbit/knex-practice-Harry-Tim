@@ -1,46 +1,71 @@
-const ShoppingListService = require('../src/shopping-list-service');
+'use strict';
+
 const knex = require('knex');
+const shoppingListService = require('../src/shopping-list-service');
+const { expect } = require('chai');
 
 describe('Shopping List Service object', function () {
-    let db;
-
-    let testData = [
-            {
-              item_id: 1,
-              item_name: 'Fish tricks',
-              price: '13.10',
-              date_added: '2020-09-01T23:33:00.501Z',
-              checked: false,
-              category: 'Main'
-            },
-            {
-              item_id: 2,
-              item_name: 'Not Dogs',
-              price: '4.99',
-              date_added: '2020-09-01T23:33:00.501Z',
-              checked: true,
-              category: 'Snack'
-            },
-            {
-              item_id: 3,
-              item_name: 'Bluffalo Wings',
-              price: '5.50',
-              date_added: '2020-09-01T23:33:00.501Z',
-              checked: false,
-              category: 'Snack'
-            }
-    ];
+  let db;
+  let testData = [
+    {
+      id: 1,
+      name: 'Fish tricks',
+      price: '13.10',
+      date_added: new Date('2020-09-01T23:33:00.501Z'),
+      checked: false,
+      category: 'Main'
+    },
+    {
+      id: 2,
+      name: 'Not Dogs',
+      price: '4.99',
+      date_added: new Date('2020-09-01T23:33:00.501Z'),
+      checked: true,
+      category: 'Snack'
+    },
+    {
+      id: 3,
+      name: 'Bluffalo Wings',
+      price: '5.50',
+      date_added: new Date('2020-09-01T23:33:00.501Z'),
+      checked: false,
+      category: 'Snack'
+    }
+  ];
     
-    before(() => {
-        db = knex({
-            client: 'pg',
-            connection: process.env.TEST_DB_URL
-        });
+  before(() => {
+    db = knex({
+      client: 'pg',
+      connection: process.env.TEST_DB_URL
+    });
+  });
+
+  before(() => {
+    return db('shopping_list').truncate();
+  });
+
+  afterEach(() => {
+    return db('shopping_list').truncate();
+  });
+
+  after(() => db.destroy());
+
+  context('Given \'shopping_list\' contains data', () => {
+
+    beforeEach(() => {
+      return db
+        .into('shopping_list')
+        .insert(testData);
     });
 
-    describe('This is for all the tests for the GET items', function () {
-        it('should return the table from getAllItems()', function () {
-
-        });
-    })
-}
+    describe('testing getAllItems', function () {
+      it('should return the table from getAllItems()', function () {
+        return shoppingListService.getAllItems(db)
+          .then(actual => {
+            console.log(actual);
+            expect(actual).to.eql(testData);
+          });
+      });
+    });
+  });
+});
